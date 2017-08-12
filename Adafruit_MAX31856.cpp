@@ -59,7 +59,12 @@ boolean Adafruit_MAX31856::begin(void) {
   // assert on any fault
   writeRegister8(MAX31856_MASK_REG, 0x0);
   
+  // Enable open-circuit fault detection
   writeRegister8(MAX31856_CR0_REG, MAX31856_CR0_OCFAULT0);
+  // Turn on auto conversion mode (temperature update every ~100ms)
+  writeRegister8(MAX31856_CR0_REG, MAX31856_CR0_AUTOCONVERT);
+  
+  // Set thermocouple type to K by default (call setThermocoupleType() to change)
   setThermocoupleType(MAX31856_TCTYPE_K);
 
   return true;
@@ -120,7 +125,7 @@ void Adafruit_MAX31856::oneShotTemperature(void) {
 }
 
 float Adafruit_MAX31856::readCJTemperature(void) {
-  oneShotTemperature();
+  //oneShotTemperature();
 
   int16_t temp16 = readRegister16(MAX31856_CJTH_REG);
   float tempfloat = temp16;
@@ -130,7 +135,7 @@ float Adafruit_MAX31856::readCJTemperature(void) {
 }
 
 float Adafruit_MAX31856::readThermocoupleTemperature(void) {
-  oneShotTemperature();
+  //oneShotTemperature();
 
   int32_t temp24 = readRegister24(MAX31856_LTCBH_REG);
   if (temp24 & 0x800000) {
@@ -141,6 +146,19 @@ float Adafruit_MAX31856::readThermocoupleTemperature(void) {
 
   float tempfloat = temp24;
   tempfloat *= 0.0078125;
+  // Now check for faults, and force temperature to return as NAN if 
+  // there is a relevant fault
+  uint8_t fault = readFault();
+  if ( (fault & MAX31856_FAULT_CJRANGE) |
+	   (fault & MAX31856_FAULT_TCRANGE) |
+	   (fault & MAX31856_FAULT_CJHIGH) |
+	   (fault & MAX31856_FAULT_CJLOW) |
+       (fault & MAX31856_FAULT_TCHIGH) |
+       (fault & MAX31856_FAULT_TCLOW) |
+	   (fault & MAX31856_FAULT_OVUV) |
+	   (fault & MAX31856_FAULT_OPEN) ) {
+	     tempfloat = NAN; // If there are faults, return NAN as the temperature
+  }
 
   return tempfloat;
 }
