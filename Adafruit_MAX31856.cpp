@@ -59,7 +59,7 @@ boolean Adafruit_MAX31856::begin(void) {
   // assert on any fault
   writeRegister8(MAX31856_MASK_REG, 0x0);
   
-  // Enable open-circuit fault detection
+  // Enable open-circuit fault detection (FAULT0 is fast check, FAULT1 is slower check)
   writeRegister8(MAX31856_CR0_REG, MAX31856_CR0_OCFAULT0);
   // Turn on auto conversion mode (temperature update every ~100ms)
   writeRegister8(MAX31856_CR0_REG, MAX31856_CR0_AUTOCONVERT);

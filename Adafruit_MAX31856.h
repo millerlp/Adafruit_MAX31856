@@ -20,8 +20,8 @@
 #define MAX31856_CR0_REG           0x00
 #define MAX31856_CR0_AUTOCONVERT   0x80
 #define MAX31856_CR0_1SHOT         0x40
-#define MAX31856_CR0_OCFAULT1      0x20
-#define MAX31856_CR0_OCFAULT0      0x10
+#define MAX31856_CR0_OCFAULT1      0x20 // 33-37ms open circuit check
+#define MAX31856_CR0_OCFAULT0      0x10 // 13-15ms open circuit check (for low-resistance circuits)
 #define MAX31856_CR0_CJ            0x08
 #define MAX31856_CR0_FAULT         0x04
 #define MAX31856_CR0_FAULTCLR      0x02
