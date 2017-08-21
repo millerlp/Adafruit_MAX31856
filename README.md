@@ -1,3 +1,13 @@
+Branch of the Adafruit_MAX31856 library 
+https://github.com/adafruit/Adafruit_MAX31856
+
+Modified by LPM 2017
+Added FAULT checking to the main `readThermocoupleTemperature()` function so that
+it automatically returns `nan` if there is a fault (rather than a bogus 
+temperature value). 
+
+
+-----------------------------------------------
 This is the Adafruit MAX31856 Arduino Library 
 
 Tested and works great with the Adafruit Thermocouple Breakout w/MAX31856
